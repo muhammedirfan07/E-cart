@@ -4,9 +4,27 @@ import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Wishlist from './Wishlist';
 import { addToWishlist } from '../redux/slice/wishlistSlice';
+import { addToCart } from '../redux/slice/cartSlice';
 
 const View = () => {
-    
+
+// star rating
+
+const starRating =(rating)=>{
+ const stars=[]
+ for(let i=0;i<5;i++){
+  stars.push(
+  <i key={i} 
+  className={`fa-solid   ${ i <= rating?"fa-star text-sm text-yellow-500":"fa-star text-sm text-gray-200"} `}></i>   
+
+  )
+ }
+ return stars;
+}
+
+ // cart
+const userCart=useSelector(state=>state.cartReducer)
+ 
 // wishlist
  const dispatch = useDispatch()
  const userWishlist = useSelector(state=>state.wishlistReducer)
@@ -29,7 +47,7 @@ const View = () => {
   // wishlist add button action
 
   const  handleWishlist =()=>{
-    const existingProduct =userWishlist?.find(item=>item.id=== Number(id))
+    const existingProduct =userWishlist?.find(item=>item.id === Number(id))
     if(existingProduct){
       alert('the product is already existing wishlist')
     }else{
@@ -37,12 +55,23 @@ const View = () => {
     }
   }
 
+  // cart add button action
+   const handleCart =()=>{
+    dispatch(addToCart(product))
+    const existingProduct = userCart?.find(item=>item.id ===Number(id))
+    // if(existingProduct){
+    //   alert(" cart product quandity Incermenting..!")
+    // }else{
+    //   alert("product  add to cart..!")
+    // }
+   }
+
 
   return (
     <>
       <Header />
       <div 
-       className="flex flex-col mx-5">
+       className="flex flex-col mx-5 ">
         <div className="grid grid-cols-2 items-center h-screen">
           <img
             width={"450px"}
@@ -64,11 +93,11 @@ const View = () => {
              
               <div className="flex justify-between mt-5 px-5">
                 <button onClick={handleWishlist} className="bg-blue-600 text-white p-2 rounded">
-                  {" "}
+               
                   Add to whislist
                 </button>
-                <button className="bg-green-600 text-white p-2 rounded">
-                  {" "}
+                <button onClick={handleCart} className="bg-green-600 text-white p-2 rounded">
+                
                   Add to cart
                 </button>
               </div>
@@ -81,7 +110,7 @@ const View = () => {
                     <span>{item?.comment}</span>
                   </h5>
                   <p>
-                    Rating :{item?.rating}<i className="fa-solid fa-star text-yellow-400"></i>
+                    Rating : {starRating(item?.rating )}
                   </p>
                 </div>
               ))
